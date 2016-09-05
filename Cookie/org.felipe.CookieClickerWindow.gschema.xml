@@ -1,0 +1,13 @@
+<schemalist>
+  <schema id="org.felipe.CookieClickerWindow" path="/org/felipe/CookieClickerWindow/" gettext-domain="CookieClikerWindow">
+
+    <key name="darktheme" type="b">
+      <default>false</default>
+      <summary>upgrades</summary>
+      <description>
+        NA
+      </description>
+    </key>
+
+  </schema>
+</schemalist>

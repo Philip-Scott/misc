@@ -1,0 +1,565 @@
+<schemalist>
+  <schema id="org.felipe.CookieClicker" path="/org/felipe/CookieClicker/" gettext-domain="CookieCliker">
+
+    <key name="cookies" type="s">
+      <default l10n="messages">"0"</default>
+      <summary>Total cookies</summary>
+      <description>
+        NA
+      </description>
+    </key>
+    <key name="handmade" type="s">
+      <default l10n="messages">"0"</default>
+      <summary>Total cookies</summary>
+      <description>
+        NA
+      </description>
+    </key>
+
+    <key name="cursor" type="i">
+      <default>0</default>
+      <summary>Ammount in this shop</summary>
+      <description>
+        NA
+      </description>
+    </key>
+
+    <key name="granma" type="i">
+      <default>0</default>
+      <summary>Ammount of granma</summary>
+      <description>
+        NA
+      </description>
+    </key>
+
+    <key name="farm" type="i">
+      <default>0</default>
+      <summary>Ammount in this shop</summary>
+      <description>
+        NA
+      </description>
+    </key>
+
+    <key name="factory" type="i">
+      <default>0</default>
+      <summary>Ammount in this shop</summary>
+      <description>
+        NA
+      </description>
+    </key>
+
+    <key name="mine" type="i">
+      <default>0</default>
+      <summary>Ammount in this shop</summary>
+      <description>
+        NA
+      </description>
+    </key>
+
+    <key name="ship" type="i">
+      <default>0</default>
+      <summary>Ammount in this shop</summary>
+      <description>
+        NA
+      </description>
+    </key>
+
+    <key name="lab" type="i">
+      <default>0</default>
+      <summary>Ammount in this shop</summary>
+      <description>
+        NA
+      </description>
+    </key>
+
+    <key name="portal" type="i">
+      <default>0</default>
+      <summary>Ammount in this shop</summary>
+      <description>
+        NA
+      </description>
+    </key>
+
+    <key name="time" type="i">
+      <default>0</default>
+      <summary>Ammount in this shop</summary>
+      <description>
+        NA
+      </description>
+    </key>
+    <key name="anti" type="i">
+      <default>0</default>
+      <summary>Ammount in this shop</summary>
+      <description>
+        NA
+      </description>
+    </key>
+
+
+
+    <key name="u0" type="b">
+      <default>false</default>
+      <summary>upgrades</summary>
+      <description>
+        NA
+      </description>
+    </key>
+    <key name="u1" type="b">
+      <default>false</default>
+      <summary>upgrades</summary>
+      <description>
+        NA
+      </description>
+    </key>
+    <key name="u2" type="b">
+      <default>false</default>
+      <summary>upgrades</summary>
+      <description>
+        NA
+      </description>
+    </key>
+    <key name="u3" type="b">
+      <default>false</default>
+      <summary>upgrades</summary>
+      <description>
+        NA
+      </description>
+    </key>
+    <key name="u4" type="b">
+      <default>false</default>
+      <summary>upgrades</summary>
+      <description>
+        NA
+      </description>
+    </key>
+    <key name="u75" type="b">
+      <default>false</default>
+      <summary>upgrades</summary>
+      <description>
+        NA
+      </description>
+    </key>
+    <key name="u76" type="b">
+      <default>false</default>
+      <summary>upgrades</summary>
+      <description>
+        NA
+      </description>
+    </key>
+    <key name="u77" type="b">
+      <default>false</default>
+      <summary>upgrades</summary>
+      <description>
+        NA
+      </description>
+    </key>
+    <key name="u78" type="b">
+      <default>false</default>
+      <summary>upgrades</summary>
+      <description>
+        NA
+      </description>
+    </key>
+    <key name="u119" type="b">
+      <default>false</default>
+      <summary>upgrades</summary>
+      <description>
+        NA
+      </description>
+    </key>
+
+
+    <key name="u7" type="b">
+      <default>false</default>
+      <summary>upgrades</summary>
+      <description>
+        NA
+      </description>
+    </key>
+    <key name="u8" type="b">
+      <default>false</default>
+      <summary>upgrades</summary>
+      <description>
+        NA
+      </description>
+    </key>
+    <key name="u9" type="b">
+      <default>false</default>
+      <summary>upgrades</summary>
+      <description>
+        NA
+      </description>
+    </key>
+    <key name="u44" type="b">
+      <default>false</default>
+      <summary>upgrades</summary>
+      <description>
+        NA
+      </description>
+    </key>
+    <key name="u110" type="b">
+      <default>false</default>
+      <summary>upgrades</summary>
+      <description>
+        NA
+      </description>
+    </key>
+
+
+    <key name="u10" type="b">
+      <default>false</default>
+      <summary>upgrades</summary>
+      <description>
+        NA
+      </description>
+    </key>
+    <key name="u11" type="b">
+      <default>false</default>
+      <summary>upgrades</summary>
+      <description>
+        NA
+      </description>
+    </key>
+    <key name="u12" type="b">
+      <default>false</default>
+      <summary>upgrades</summary>
+      <description>
+        NA
+      </description>
+    </key>
+    <key name="u45" type="b">
+      <default>false</default>
+      <summary>upgrades</summary>
+      <description>
+        NA
+      </description>
+    </key>
+    <key name="u111" type="b">
+      <default>false</default>
+      <summary>upgrades</summary>
+      <description>
+        NA
+      </description>
+    </key>
+
+
+    <key name="u13" type="b">
+      <default>false</default>
+      <summary>upgrades</summary>
+      <description>
+        NA
+      </description>
+    </key>
+    <key name="u14" type="b">
+      <default>false</default>
+      <summary>upgrades</summary>
+      <description>
+        NA
+      </description>
+    </key>
+    <key name="u15" type="b">
+      <default>false</default>
+      <summary>upgrades</summary>
+      <description>
+        NA
+      </description>
+    </key>
+    <key name="u46" type="b">
+      <default>false</default>
+      <summary>upgrades</summary>
+      <description>
+        NA
+      </description>
+    </key>
+    <key name="u112" type="b">
+      <default>false</default>
+      <summary>upgrades</summary>
+      <description>
+        NA
+      </description>
+    </key>
+
+
+    <key name="u16" type="b">
+      <default>false</default>
+      <summary>upgrades</summary>
+      <description>
+        NA
+      </description>
+    </key>
+    <key name="u17" type="b">
+      <default>false</default>
+      <summary>upgrades</summary>
+      <description>
+        NA
+      </description>
+    </key>
+    <key name="u18" type="b">
+      <default>false</default>
+      <summary>upgrades</summary>
+      <description>
+        NA
+      </description>
+    </key>
+    <key name="u47" type="b">
+      <default>false</default>
+      <summary>upgrades</summary>
+      <description>
+        NA
+      </description>
+    </key>
+    <key name="u113" type="b">
+      <default>false</default>
+      <summary>upgrades</summary>
+      <description>
+        NA
+      </description>
+    </key>
+
+
+    <key name="u19" type="b">
+      <default>false</default>
+      <summary>upgrades</summary>
+      <description>
+        NA
+      </description>
+    </key>
+    <key name="u20" type="b">
+      <default>false</default>
+      <summary>upgrades</summary>
+      <description>
+        NA
+      </description>
+    </key>
+    <key name="u21" type="b">
+      <default>false</default>
+      <summary>upgrades</summary>
+      <description>
+        NA
+      </description>
+    </key>
+    <key name="u48" type="b">
+      <default>false</default>
+      <summary>upgrades</summary>
+      <description>
+        NA
+      </description>
+    </key>
+    <key name="u114" type="b">
+      <default>false</default>
+      <summary>upgrades</summary>
+      <description>
+        NA
+      </description>
+    </key>
+
+
+    <key name="u22" type="b">
+      <default>false</default>
+      <summary>upgrades</summary>
+      <description>
+        NA
+      </description>
+    </key>
+    <key name="u23" type="b">
+      <default>false</default>
+      <summary>upgrades</summary>
+      <description>
+        NA
+      </description>
+    </key>
+    <key name="u24" type="b">
+      <default>false</default>
+      <summary>upgrades</summary>
+      <description>
+        NA
+      </description>
+    </key>
+    <key name="u49" type="b">
+      <default>false</default>
+      <summary>upgrades</summary>
+      <description>
+        NA
+      </description>
+    </key>
+    <key name="u115" type="b">
+      <default>false</default>
+      <summary>upgrades</summary>
+      <description>
+        NA
+      </description>
+    </key>
+
+
+
+    <key name="u25" type="b">
+      <default>false</default>
+      <summary>upgrades</summary>
+      <description>
+        NA
+      </description>
+    </key>
+    <key name="u26" type="b">
+      <default>false</default>
+      <summary>upgrades</summary>
+      <description>
+        NA
+      </description>
+    </key>
+    <key name="u27" type="b">
+      <default>false</default>
+      <summary>upgrades</summary>
+      <description>
+        NA
+      </description>
+    </key>
+    <key name="u50" type="b">
+      <default>false</default>
+      <summary>upgrades</summary>
+      <description>
+        NA
+      </description>
+    </key>
+    <key name="u116" type="b">
+      <default>false</default>
+      <summary>upgrades</summary>
+      <description>
+        NA
+      </description>
+    </key>
+
+
+    <key name="u28" type="b">
+      <default>false</default>
+      <summary>upgrades</summary>
+      <description>
+        NA
+      </description>
+    </key>
+    <key name="u29" type="b">
+      <default>false</default>
+      <summary>upgrades</summary>
+      <description>
+        NA
+      </description>
+    </key>
+    <key name="u30" type="b">
+      <default>false</default>
+      <summary>upgrades</summary>
+      <description>
+        NA
+      </description>
+    </key>
+    <key name="u51" type="b">
+      <default>false</default>
+      <summary>upgrades</summary>
+      <description>
+        NA
+      </description>
+    </key>
+    <key name="u117" type="b">
+      <default>false</default>
+      <summary>upgrades</summary>
+      <description>
+        NA
+      </description>
+    </key>
+
+
+	<key name="u99" type="b">
+      <default>false</default>
+      <summary>upgrades</summary>
+      <description>
+        NA
+      </description>
+    </key>
+	<key name="u100" type="b">
+      <default>false</default>
+      <summary>upgrades</summary>
+      <description>
+        NA
+      </description>
+    </key>
+    <key name="u101" type="b">
+      <default>false</default>
+      <summary>upgrades</summary>
+      <description>
+        NA
+      </description>
+    </key>
+    <key name="u102" type="b">
+      <default>false</default>
+      <summary>upgrades</summary>
+      <description>
+        NA
+      </description>
+    </key>
+    <key name="u118" type="b">
+      <default>false</default>
+      <summary>upgrades</summary>
+      <description>
+        NA
+      </description>
+    </key>
+
+
+
+    <key name="u57" type="b">
+      <default>false</default>
+      <summary>upgrades</summary>
+      <description>
+        NA
+      </description>
+    </key>
+    <key name="u58" type="b">
+      <default>false</default>
+      <summary>upgrades</summary>
+      <description>
+        NA
+      </description>
+    </key>
+    <key name="u59" type="b">
+      <default>false</default>
+      <summary>upgrades</summary>
+      <description>
+        NA
+      </description>
+    </key>
+    <key name="u60" type="b">
+      <default>false</default>
+      <summary>upgrades</summary>
+      <description>
+        NA
+      </description>
+    </key>
+    <key name="u61" type="b">
+      <default>false</default>
+      <summary>upgrades</summary>
+      <description>
+        NA
+      </description>
+    </key>
+    <key name="u62" type="b">
+      <default>false</default>
+      <summary>upgrades</summary>
+      <description>
+        NA
+      </description>
+    </key>
+    <key name="u63" type="b">
+      <default>false</default>
+      <summary>upgrades</summary>
+      <description>
+        NA
+      </description>
+    </key>
+
+    <key name="u103" type="b">
+      <default>false</default>
+      <summary>upgrades</summary>
+      <description>
+        NA
+      </description>
+    </key>
+  </schema>
+</schemalist>

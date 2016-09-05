@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Encoding=UTF-8
+Name=Cookie Clicker
+Comment=Click click click....
+Exec=/home/felipe/.local/CC/Cookie\ Clicker
+Icon=/home/felipe/.local/CC/icon.png
+Categories=Game
+Terminal=false
+StartupNotify=true

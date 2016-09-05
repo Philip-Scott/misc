@@ -10,3 +10,4 @@ The projects include:
 - **Minesweeper:** If you've never played it, you're missing out!
 - **Network Monitor:** Sample code for checking network status right from vala
 - **Coder:** For when you need to pass text into hardcoded code, but are too lazy to do so
+- **Cookie:** Cookie Clicker clone made in vala (This was my very first "app")
