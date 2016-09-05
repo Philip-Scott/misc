@@ -1,0 +1,21 @@
+<schemalist>
+  <schema id="org.felipe.logic" path="/org/felipe/logic/" gettext-domain="logic">
+       
+    <key name="formula0" type="s">
+      <default l10n="messages">""</default>
+      <summary>formula1</summary>
+      <description>
+           Entrybox 1
+      </description>
+    </key>
+    
+     <key name="formula1" type="s">
+      <default l10n="messages">""</default>
+      <summary>formula2</summary>
+      <description>
+           Entrybox 2
+      </description>
+    </key>
+    
+  </schema>
+</schemalist>

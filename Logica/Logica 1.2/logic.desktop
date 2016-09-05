@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Encoding=UTF-8
+Name=Logic Calculator
+Comment=Remote iMessages for linux
+Exec=/home/felipe/Code/vala/Logica/logica
+Icon=/home/felipe/Code/vala/Logica/logic.svg
+
