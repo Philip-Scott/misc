@@ -1,0 +1,94 @@
+/*
+You can type here any CSS rule recognized by GTK+.
+You can temporarily disable this custom CSS by clicking on the "Pause" button above.
+
+Changes are applied instantly and globally, for the whole application.
+*/
+.no {
+	color: #ddd;
+}
+.mine {
+font: open sans light 12px; 
+color: mix (@bg_color, #0593c7, 0.7);
+	background-image: linear-gradient(to bottom,
+                                  transparent,
+                                  transparent 50%,
+                                  alpha (#F00, 0.00)
+                                  );
+}
+.bomb {
+font: open sans light 12px; 
+color: mix (@bg_color, #0593c7, 0.7);
+	background-image: linear-gradient(to bottom,
+                                  transparent,
+                                  transparent 50%,
+                                  alpha (#F00, 0.00)
+                                  );
+}
+.flaged {
+	border-color: #ff7676; 
+}
+
+.victory {
+	font: open sans light 12px; 
+	border-color: #4a92ff; 
+}
+
+.m0 {
+font: open sans light 12px; 
+border-color: transparent;
+background-image: linear-gradient(to bottom,
+                                  transparent,
+                                  transparent 50%,
+                                  alpha (#000, 0.00)
+                                  );
+}
+
+.m1 {
+	color: mix (@bg_color, #0593c7, 0.7);
+	text-shadow: 0 1px alpha (#fff, 0.6);
+}
+.m2 { 
+	color: mix (@bg_color, #1305c7, 0.7);
+	text-shadow: 0 1px alpha (#fff, 0.6);
+}
+.m3 { 
+	color: mix (@bg_color, #0fc705, 0.7);
+	text-shadow: 0 1px alpha (#fff, 0.6);
+}
+.m4 { 
+
+	color: mix (@bg_color, #3e6a40, 0.7);
+	text-shadow: 0 1px alpha (#fff, 0.6);
+}
+.m5 {
+
+	color: mix (@bg_color, #ff5a00, 0.7);
+	text-shadow: 0 1px alpha (#fff, 0.6);
+}
+.m6 { 
+
+	color: mix (@bg_color, #ff0000, 0.7);
+	text-shadow: 0 1px alpha (#fff, 0.6);
+}
+.m7 { 
+	color: mix (@bg_color, #821616, 0.7);
+	text-shadow: 0 1px alpha (#fff, 0.6);
+}
+.m8 {  
+	color: mix (@bg_color, #423131, 0.7);
+	text-shadow: 0 1px alpha (#fff, 0.6);
+}
+
+*:insensitive {
+    color: #ccc;	
+}
+
+.button {
+	font: open sans medium 9px; 
+	background-image: linear-gradient(to bottom,
+                                  transparent,
+                                  transparent 0%,
+                                  alpha (#F00, 0.00)
+                                  );
+}
