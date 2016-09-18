@@ -1,0 +1,11 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Piggie
+Comment=Spice up your slides
+Exec=/usr/bin/piggie
+Icon=piggie
+Terminal=false
+Type=Application
+StartupNotify=true
+Categories=Other
+
