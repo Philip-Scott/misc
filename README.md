@@ -12,3 +12,5 @@ The projects include:
 - **Coder:** For when you need to pass text into hardcoded code, but are too lazy to do so
 - **Cookie:** Cookie Clicker clone made in vala (This was my very first "app")
 - **Logica:** Mathematical Logic calculator. It can check if two equations are equal, print logic tables to the terminal, and see if the equations are correctly formed
+
+

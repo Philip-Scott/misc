@@ -1,6 +1,6 @@
 public class spliter {
 
-public static void main () {
+public static void main (string[] args) {
 
 
  	string[] lines = file.split ("\n", -1);
@@ -11,9 +11,9 @@ public static void main () {
 
  		if (part[0].contains ("#")) {
  			group = part[1];
- 			stdout.printf ("languages.set (\"%s\", dgettext (\"xkeyboard-config\",\"%s\"));\n", part[1], part[0].replace ("#",""));
+ 			stdout.printf ("""languages.set ("%s", dgettext ("xkeyboard-config","%s"));\n""", part[1], part[0].replace ("#",""));
  		} else {
- 			stdout.printf ("languages.set (\"%s+%s\", dgettext (\"xkeyboard-config\",\"%s\"));\n", group, part[1], part[0].replace ("#",""));
+ 			stdout.printf ("""languages.set ("%s+%s", dgettext ("xkeyboard-config","%s"));\n""", group, part[1], part[0].replace ("#",""));
  		}
 
  		//languages.set ("latam", _("Spanish (Latin America)"));
