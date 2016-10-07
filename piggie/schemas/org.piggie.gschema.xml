@@ -1,0 +1,14 @@
+<schemalist>
+	<schema id="org.piggie.bank" path="/org/piggie/bank/" gettext-domain="piggie">
+		<key name="cash" type="i">
+			<default>0</default>
+			<summary>The saved width of the window.</summary>
+			<description>The saved width of the window. Must be greater than 700, or it will not take effect.</description>
+		</key>
+		<key name="goal" type="i">
+			<default>1000</default>
+			<summary>The saved width of the window.</summary>
+			<description>The saved width of the window. Must be greater than 700, or it will not take effect.</description>
+		</key>
+	</schema>
+</schemalist>
