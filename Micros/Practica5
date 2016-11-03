@@ -1,0 +1,124 @@
+// TODO: Set Pins for RS & E
+LCD_RS EQU p3.6  
+LCD_E EQU p3.7
+KEYBOARD_INPUT EQU p1
+
+key_1 EQU 90H
+key_2 EQU 91H
+key_3 EQU 92H
+key_4 EQU 94H
+key_5 EQU 95H
+key_6 EQU 96H
+key_7 EQU 98H
+key_8 EQU 99H
+key_9 EQU 9AH
+key_0 EQU 9dH
+key_A EQU 93H
+key_B EQU 97H
+key_C EQU 9BH
+key_D EQU 9FH
+key_HASH EQU 9EH
+key_AST EQU 9CH
+
+TO_DISP EQU R7
+
+ORG 0H
+JMP main;
+
+; extern 0 : Debounced Keyboard signal
+ORG 04H
+	CLR IE0
+	acall decode_key_press;
+	acall send_to_display;
+reti
+
+; Temp0
+ORG 0BH;
+reti
+
+; Extern 1
+ORG 13H
+reti
+
+; Temp1
+ORG 1BH
+reti
+
+; Temp2
+ORG 2BH
+reti
+
+ORG 40H
+main:
+acall reset_display
+setb LCD_RS
+
+SETB IT0
+MOV IE, #10100011B
+
+jmp $;
+	
+// Decodes what was pressed and places value on A
+// Decoder -> ASCII
+decode_key_press:
+	MOV A, KEYBOARD_INPUT;
+	RR A
+	ANL A, #00001111b
+	XRL A, #00001111b
+
+	MOV dptr, #0EEh
+	MOVC A, @A+DPTR
+
+	MOV TO_DISP, A;
+ret
+
+send_to_display: // Sends what's on R7 to disp
+	CLR LCD_E;
+	MOV P2, TO_disp;
+	MOV R7, #100;
+	MOV R6, #100;
+
+	wait_for_disp1:
+	wait_for_disp2:
+	DJNZ R7, wait_for_disp1;
+	DJNZ R6, wait_for_disp2;
+	
+	SETB LCD_E
+	nop	
+	CLR LCD_E;
+ret
+
+reset_display:	; Clears the screen, 
+	CLR LCD_RS
+	MOV TO_DISP, #38H;
+	acall send_to_display
+	MOV TO_DISP, #38H;
+	acall send_to_display
+	MOV TO_DISP, #38H;
+	acall send_to_display
+	MOV TO_DISP, #01H; //Borrar DDRM
+	acall send_to_display
+	MOV TO_DISP, #0EH; Display encendido, cursor activado, parpadeo desactivado.
+	acall send_to_display
+	MOV TO_DISP, #80H
+ret
+
+org 0EEh
+; Key codes
+DB 31H //
+DB 32H //1
+DB 33H //2
+DB 41H //A
+DB 34H //4
+DB 35H //5
+DB 36H //6
+DB 42H //B
+DB 37H //7
+DB 38H //8
+DB 39H //9
+DB 43H //C
+DB 2Ah //*
+DB 30H //0
+DB 23H //# 
+DB 44H //D
+end
