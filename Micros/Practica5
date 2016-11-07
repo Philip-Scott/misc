@@ -1,8 +1,8 @@
-// TODO: Set Pins for RS & E
+
 LCD_RS EQU p3.6  
 LCD_E EQU p3.7
 KEYBOARD_INPUT EQU p1
-ALT_INPUT EQU R6
+ALT_INPUT EQU R5
 ALT_BUTTON EQU p3.5
 
 key_1 EQU 90H
@@ -31,7 +31,6 @@ JMP main;
 ORG 04H
 	CLR IE0
 	acall decode_key_press;
-	acall send_to_display;
 reti
 
 ; Temp0
@@ -75,14 +74,15 @@ decode_key_press:
 		// BUTTON NOT PRESSED
 		MOV dptr, #0EEh
 		MOVC A, @A+DPTR
+		
 		MOV TO_DISP, A;
-	ret
+	jmp decode_send
 	
 	alt_pressed:	
 		XCH A, ALT_INPUT;
 		JNZ second_key;
 		first_key:
-			reti
+			ret
 		second_key:
 			RL A
 			RL A
@@ -91,6 +91,8 @@ decode_key_press:
 			ADD A, ALT_INPUT
 			MOV TO_DISP, A;
 			MOV ALT_INPUT, #0;
+	decode_send:	
+	acall send_to_display;
 ret
 
 send_to_display: // Sends what's on R7 to disp
