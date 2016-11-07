@@ -2,6 +2,8 @@
 LCD_RS EQU p3.6  
 LCD_E EQU p3.7
 KEYBOARD_INPUT EQU p1
+ALT_INPUT EQU R6
+ALT_BUTTON EQU p3.5
 
 key_1 EQU 90H
 key_2 EQU 91H
@@ -50,11 +52,14 @@ reti
 
 ORG 40H
 main:
-acall reset_display
-setb LCD_RS
+	acall reset_display
+	MOV TO_DISP, #0;
+	MOV ALT_INPUT, #0;
 
-SETB IT0
-MOV IE, #10100011B
+	setb LCD_RS
+
+	SETB IT0
+	MOV IE, #10100011B
 
 jmp $;
 	
@@ -66,10 +71,26 @@ decode_key_press:
 	ANL A, #00001111b
 	XRL A, #00001111b
 
-	MOV dptr, #0EEh
-	MOVC A, @A+DPTR
-
-	MOV TO_DISP, A;
+	JB ALT_BUTTON, alt_pressed;
+		// BUTTON NOT PRESSED
+		MOV dptr, #0EEh
+		MOVC A, @A+DPTR
+		MOV TO_DISP, A;
+	ret
+	
+	alt_pressed:	
+		XCH A, ALT_INPUT;
+		JNZ second_key;
+		first_key:
+			reti
+		second_key:
+			RL A
+			RL A
+			RL A
+			RL A
+			ADD A, ALT_INPUT
+			MOV TO_DISP, A;
+			MOV ALT_INPUT, #0;
 ret
 
 send_to_display: // Sends what's on R7 to disp
