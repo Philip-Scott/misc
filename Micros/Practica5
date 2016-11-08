@@ -3,7 +3,9 @@ LCD_RS EQU p3.6
 LCD_E EQU p3.7
 KEYBOARD_INPUT EQU p1
 ALT_INPUT EQU R5
-ALT_BUTTON EQU p3.5
+ALT_BUTTON EQU p3.3
+	
+SCREEN_DATA_POINTER EQU R1
 
 key_1 EQU 90H
 key_2 EQU 91H
@@ -54,12 +56,11 @@ main:
 	acall reset_display
 	MOV TO_DISP, #0;
 	MOV ALT_INPUT, #0;
-
-	setb LCD_RS
+	MOV SCREEN_DATA_POINTER, #0;
 
 	SETB IT0
+	CLR IE0
 	MOV IE, #10100011B
-
 jmp $;
 	
 // Decodes what was pressed and places value on A
@@ -70,15 +71,7 @@ decode_key_press:
 	ANL A, #00001111b
 	XRL A, #00001111b
 
-	JB ALT_BUTTON, alt_pressed;
-		// BUTTON NOT PRESSED
-		MOV dptr, #0EEh
-		MOVC A, @A+DPTR
-		
-		MOV TO_DISP, A;
-	jmp decode_send
-	
-	alt_pressed:	
+	JB ALT_BUTTON, alt_not_pressed;
 		XCH A, ALT_INPUT;
 		JNZ second_key;
 		first_key:
@@ -91,8 +84,32 @@ decode_key_press:
 			ADD A, ALT_INPUT
 			MOV TO_DISP, A;
 			MOV ALT_INPUT, #0;
+	jmp decode_send
+	
+	alt_not_pressed:	
+		// BUTTON NOT PRESSED
+		MOV dptr, #0EEh
+		MOVC A, @A+DPTR
+		
+		MOV TO_DISP, A;
 	decode_send:	
+	acall save_data	
 	acall send_to_display;
+ret
+
+save_data: 
+	INC SCREEN_DATA_POINTER
+	CJNE SCREEN_DATA_POINTER, #17, next_char
+		//NextLine
+		clr LCD_RS
+		MOV TO_DISP, #0C0H;
+		acall send_to_display;
+		setb LCD_RS;
+	next_char:
+	CJNE SCREEN_DATA_POINTER, #33, dont_clear
+		acall reset_display
+		MOV SCREEN_DATA_POINTER, #0;
+	dont_clear:
 ret
 
 send_to_display: // Sends what's on R7 to disp
@@ -124,6 +141,7 @@ reset_display:	; Clears the screen,
 	MOV TO_DISP, #0EH; Display encendido, cursor activado, parpadeo desactivado.
 	acall send_to_display
 	MOV TO_DISP, #80H
+	setb LCD_RS;
 ret
 
 org 0EEh
