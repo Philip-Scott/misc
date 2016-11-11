@@ -99,6 +99,7 @@ ret
 
 save_data: 
 	INC SCREEN_DATA_POINTER
+	MOV A, TO_DISP;
 	CJNE SCREEN_DATA_POINTER, #17, next_char
 		//NextLine
 		clr LCD_RS
@@ -108,8 +109,9 @@ save_data:
 	next_char:
 	CJNE SCREEN_DATA_POINTER, #33, dont_clear
 		acall reset_display
-		MOV SCREEN_DATA_POINTER, #0;
+		MOV SCREEN_DATA_POINTER, #1;
 	dont_clear:
+	MOV TO_DISP, A;
 ret
 
 send_to_display: // Sends what's on R7 to disp
