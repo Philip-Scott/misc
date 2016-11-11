@@ -58,6 +58,13 @@ main:
 	MOV ALT_INPUT, #0;
 	MOV SCREEN_DATA_POINTER, #0;
 
+	MOV TMOD, #00100001b       ;timer 1 con 8 bits con autorecarga
+	MOV SCON, #50H             ;Serial control 
+	MOV TCON, #00000101B
+	MOV	TH1, #0FDH				;set baudrate to 9600 para poder enviar lo datos
+	MOV	TL1, #0FDH				;set baudrate to 9600
+	SETB TR1
+
 	SETB IT0
 	CLR IE0
 	MOV IE, #10100011B
@@ -110,6 +117,8 @@ save_data:
 		acall reset_display
 		MOV SCREEN_DATA_POINTER, #0;
 	dont_clear:
+	
+	//MOV @SCREEN_DATA_POINTER, #34
 ret
 
 send_to_display: // Sends what's on R7 to disp
@@ -143,6 +152,13 @@ reset_display:	; Clears the screen,
 	MOV TO_DISP, #80H
 	setb LCD_RS;
 ret
+
+send_to_serial:         
+	SETB TI                                 
+	MOV SBUF, TO_DISP
+	CLR TI
+	JNB TI, $
+	RET
 
 org 0EEh
 ; Key codes
