@@ -5,7 +5,7 @@ KEYBOARD_INPUT EQU p1
 ALT_INPUT EQU R5
 ALT_BUTTON EQU p3.4
 	
-SCREEN_DATA_POINTER EQU R1
+SCREEN_DATA_POINTER EQU R0
 SEND_BUTTON EQU p3.3
 
 key_1 EQU 90H
@@ -59,7 +59,7 @@ main:
 	acall reset_display
 	MOV TO_DISP, #0;
 	MOV ALT_INPUT, #0;
-	MOV SCREEN_DATA_POINTER, #0;
+	MOV SCREEN_DATA_POINTER, #50h;
 
 	MOV TMOD, #00100001b       ;timer 1 con 8 bits con autorecarga
 	MOV SCON, #50H             ;Serial control 
@@ -109,40 +109,64 @@ decode_key_press:
 ret
 
 save_data: 
-	INC SCREEN_DATA_POINTER
 	MOV A, TO_DISP;
-	CJNE SCREEN_DATA_POINTER, #17, next_char
+	CJNE SCREEN_DATA_POINTER, #60h, next_char
 		//NextLine
 		clr LCD_RS
 		MOV TO_DISP, #0C0H;
 		acall send_to_display;
 		setb LCD_RS;
 	next_char:
-	CJNE SCREEN_DATA_POINTER, #33, dont_clear
+	CJNE SCREEN_DATA_POINTER, #70h, dont_clear
 		acall reset_display
-		MOV SCREEN_DATA_POINTER, #1;
+		MOV SCREEN_DATA_POINTER, #0d;
 	dont_clear:
 	MOV TO_DISP, A;
+	
+	MOV @SCREEN_DATA_POINTER, A
+	
+	INC SCREEN_DATA_POINTER
 ret
 
 send_to_display: // Sends what's on R7 to disp
 	CLR LCD_E;
 	MOV P2, TO_disp;
-	MOV R7, #100;
-	MOV R6, #100;
-
-	wait_for_disp1:
-	wait_for_disp2:
-	DJNZ R7, wait_for_disp1;
-	DJNZ R6, wait_for_disp2;
+	
+	acall wait;
 	
 	SETB LCD_E
 	nop	
 	CLR LCD_E;
 ret
 
-serial_main:
-	acall send_to_serial
+wait: 
+	MOV R4, #100;
+	MOV R6, #100;
+
+	wait_for_disp1:
+	wait_for_disp2:
+	DJNZ R4, wait_for_disp1;
+	DJNZ R6, wait_for_disp2;
+ret
+
+serial_main:	
+	MOV A, SCREEN_DATA_POINTER
+	
+	MOV R3, A
+	MOV 7Ah, A
+	
+	MOV A, #50H
+	serial_loop:
+		CJNE A, 7Ah, not_z
+			ret
+		not_z:
+			MOV R1, A
+			MOV A, @R1
+			MOV TO_DISP, A
+			MOV A, R1
+			INC A
+			acall send_to_serial
+	jmp serial_loop
 ret
 
 send_to_serial:         
