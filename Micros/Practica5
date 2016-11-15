@@ -8,23 +8,6 @@ ALT_BUTTON EQU p3.4
 SCREEN_DATA_POINTER EQU R0
 SEND_BUTTON EQU p3.3
 
-key_1 EQU 90H
-key_2 EQU 91H
-key_3 EQU 92H
-key_4 EQU 94H
-key_5 EQU 95H
-key_6 EQU 96H
-key_7 EQU 98H
-key_8 EQU 99H
-key_9 EQU 9AH
-key_0 EQU 9dH
-key_A EQU 93H
-key_B EQU 97H
-key_C EQU 9BH
-key_D EQU 9FH
-key_HASH EQU 9EH
-key_AST EQU 9CH
-
 TO_DISP EQU R7
 
 ORG 0H
@@ -158,6 +141,8 @@ serial_main:
 	MOV A, #50H
 	serial_loop:
 		CJNE A, 7Ah, not_z
+			acall reset_display
+			MOV SCREEN_DATA_POINTER, #50h;
 			ret
 		not_z:
 			MOV R1, A
