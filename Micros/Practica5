@@ -119,7 +119,7 @@ save_data:
 	next_char:
 	CJNE SCREEN_DATA_POINTER, #70h, dont_clear
 		acall reset_display
-		MOV SCREEN_DATA_POINTER, #0d;
+		MOV SCREEN_DATA_POINTER, #50h;
 	dont_clear:
 	MOV TO_DISP, A;
 	
