@@ -2,7 +2,7 @@
 /*
 * Unit testing geting a human string from a gps location using Geocode
 * 
-* How to compile: $ valac geo.vala --pkg ge ocode-glib-1.0
+* How to compile: $ valac geo.vala --pkg geocode-glib-1.0
 */
 public class GeolocationTest {
     public static int tests = 0;
@@ -18,9 +18,12 @@ public class GeolocationTest {
         assert_equals ("Tlajomulco de Zúñiga, Jalisco", 20.47249073624735, -103.44623565423836);
         assert_equals ("Chapala, Jalisco", 20.30055935449265, -103.19286346185555);
         assert_equals ("Montréal, Québec", 45.497954621981734, -73.56685638177743);
-        assert_equals ("Paris, France", 48.856614, 2.3522219000000177);
         assert_equals ("NYC, New York", 40.773075230678714, -73.97341250907601);
         assert_equals ("Snohomish, Washington", 47.91287560000001, -122.09818480000001);
+
+        // Currently fails returning Île-de-France instead of France. 
+        // It's not wrong, but not what is expected
+        assert_equals ("Paris, France", 48.856614, 2.3522219000000177); 
 
         stdout.printf ("\nResults:\nTests run: %d, Failures: %d\n", tests, failed);
     }
