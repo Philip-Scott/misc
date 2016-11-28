@@ -67,6 +67,7 @@ include(ValaPrecompile)
 
 vala_precompile(VALA_C
   src/Main.vala
+  src/Window.vala
   src/InfixConverter.vala
   src/PostfixToAFNE.vala
   #src/config.vala

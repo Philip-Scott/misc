@@ -53,6 +53,7 @@ public class NDA : Object {
     public Languages.Node? final_node = null;
 
     public NDA (string transition) {
+        ID = 0;
         initial_node = new Languages.Node ();
         final_node = new Languages.Node ();
 
