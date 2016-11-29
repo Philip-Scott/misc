@@ -137,8 +137,10 @@ public class Languages.PostfixToAFN : Object {
         var new_f = new Languages.Node ();
 
         new_i.add_transition (a.initial_node, "null");
+        new_i.add_transition (new_f, "null");
+
         a.final_node.add_transition (a.initial_node, "null");
-        a.initial_node.add_transition (new_f, "null");
+        a.final_node.add_transition (new_f, "null");
 
         a.initial_node = new_i;
         a.final_node = new_f;
