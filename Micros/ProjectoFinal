@@ -38,11 +38,11 @@ HAPPYNESS EQU 50H
 HUNGRY EQU 51H
 HEALTH EQU 52H
 
-BAR_FULL EQU 40h
-BAR_3_4 EQU 40h
-BAR_2_4 EQU 40h
-BAR_1_4 EQU 40h
-BAR_EMPTY EQU 40h
+BAR_FULL EQU 04h
+BAR_3_4 EQU 03h
+BAR_2_4 EQU 02h
+BAR_1_4 EQU 01h
+BAR_EMPTY EQU 00h
 
 ORG 0H
 JMP main;
@@ -117,13 +117,28 @@ make_custom_chars:
 	acall to_disp;
 	SETB LCD_RS
 	
-	// Full
-	MOV TO_DISP, #0b00100
-	acall to_disp;
-	MOV TO_DISP, #0b01110
-	acall to_disp;
+	// 0/4
+	acall custom_initial_rows
+	acall custom_empty_row
+	acall custom_empty_row
+	acall custom_empty_row
+	acall custom_empty_row
+	acall custom_empty_row
+	acall custom_full_row
+	
+	// 1/4
+	acall custom_initial_rows
+	acall custom_empty_row
+	acall custom_empty_row
+	acall custom_empty_row
 	acall custom_full_row
 	acall custom_full_row
+	acall custom_full_row
+	
+	// 2/4
+	acall custom_initial_rows
+	acall custom_empty_row
+	acall custom_empty_row
 	acall custom_full_row
 	acall custom_full_row
 	acall custom_full_row
@@ -138,32 +153,59 @@ make_custom_chars:
 	acall custom_full_row
 	acall custom_full_row
 	
-	// 2/4
-	acall custom_initial_rows
-	acall custom_empty_row
-	acall custom_empty_row
+	// Full
+	MOV TO_DISP, #0b00100
+	acall to_disp;
+	MOV TO_DISP, #0b01110
+	acall to_disp;
 	acall custom_full_row
 	acall custom_full_row
 	acall custom_full_row
-	acall custom_full_row
-	
-	// 1/4
-	acall custom_initial_rows
-	acall custom_empty_row
-	acall custom_empty_row
-	acall custom_empty_row
 	acall custom_full_row
 	acall custom_full_row
 	acall custom_full_row
 	
-	// 0/4
-	acall custom_initial_rows
-	acall custom_empty_row
-	acall custom_empty_row
-	acall custom_empty_row
-	acall custom_empty_row
-	acall custom_empty_row
+	// Happy
+	acall send_empty_row;
+	acall send_empty_row;
+	MOV TO_DISP, #0b01010
+	acall to_disp;
+	acall send_empty_row;
+	MOV TO_DISP, #0b10001
+	acall to_disp;
+	MOV TO_DISP, #0b01110
+	acall to_disp;
+	acall send_empty_row;
+	acall send_empty_row;
+	
+	//Food
+	acall send_empty_row;
+	MOV TO_DISP, #0b01110
+	acall to_disp;
+	MOV TO_DISP, #0b01110
+	acall to_disp;
+	MOV TO_DISP, #0b00100
+	acall to_disp;
+	MOV TO_DISP, #0b00100
+	acall to_disp;
+	MOV TO_DISP, #0b01110
+	acall to_disp;
+	MOV TO_DISP, #0b01110
+	acall to_disp;
+	acall send_empty_row;
+	
+	// Heart
+	acall send_empty_row;
+	MOV TO_DISP, #0b01010
+	acall to_disp;
 	acall custom_full_row
+	acall custom_full_row
+	acall custom_full_row
+	MOV TO_DISP, #0b01110
+	acall to_disp;
+	MOV TO_DISP, #0b00100
+	acall to_disp;
+	acall send_empty_row;
 ret
 
 custom_initial_rows:
@@ -183,6 +225,10 @@ custom_empty_row:
 	acall to_disp;
 ret
 
+send_empty_row:
+	MOV TO_DISP, #0b00000
+	acall to_disp;
+ret
 
 half_second:
 	INC SECONDS
