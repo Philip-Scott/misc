@@ -37,7 +37,7 @@ TEMP2 EQU R2
 HAPPYNESS EQU 50H
 HUNGRY EQU 51H
 HEALTH EQU 52H
-	
+
 BAR_FULL EQU 40h
 BAR_3_4 EQU 40h
 BAR_2_4 EQU 40h
@@ -87,7 +87,7 @@ reti
 ORG 40H
 main:
 	MOV HAPPYNESS, #90
-	MOV HUNGRY, #50H
+	MOV HUNGER, #50H
 	MOV HEALTH, #0A0H
 	
 	acall reset_display
@@ -119,6 +119,40 @@ half_second:
 		ret
 	out_half:
 ret
+
+game_tic: 
+	MOV A, HAPPYNESS
+	JZ, is_sad:
+		DEC A
+		jmp not_sad;
+	is_sad:
+		MOV A, HEALTH
+			JZ, dead:
+			DEC A
+	not_sad:	
+	MOV A, HUNGER
+	JZ, is_hungry:
+		DEC A
+		jmp not_hungry
+	is_hungry:	
+		MOV A, HEALTH
+			JZ, dead:
+			DEC A
+		MOV A, HEALTH
+			JZ, dead:
+			DEC A
+		MOV A, HEALTH
+			JZ, dead:
+			DEC A
+	not_hungry:
+	MOV A, HEALTH
+	JZ, dead:
+		DEC A
+	ret
+dead:
+ret
+
+
 
 // TO_DISP data_to_show => TO_DISP bar 
 get_bar:
