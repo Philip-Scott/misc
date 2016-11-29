@@ -1,5 +1,6 @@
 
 public int ID = 0;
+public string postfix_output;
 List<Languages.Node> nodes;
 
 public class Languages.Node : Object {
@@ -29,11 +30,11 @@ public class Languages.Node : Object {
     }
 
     public void print_transitions () {
-        stdout.printf ("Node %d \n", index);
+        postfix_output += "Node %d \n".printf (index);
 
         transitions.foreach ((key, val) => {
             foreach (var node in val) {
-                stdout.printf ("  %s : %d\n", key, node.index);
+                postfix_output += "<i>%s : %d</i>\n".printf (key, node.index);
             }
        	});
     }
@@ -41,7 +42,6 @@ public class Languages.Node : Object {
     public void set_transitions (Languages.Node node_) {
         node_.transitions.foreach ((key, val) => {
             foreach (var node in val) {
-                //stdout.printf ("Moving %s : %d to %d\n", key, node.index, index);
                 add_transition (node, key);
             }
        	});
@@ -53,7 +53,7 @@ public class NDA : Object {
     public Languages.Node? final_node = null;
 
     public NDA (string transition) {
-        ID = 0;
+
         initial_node = new Languages.Node ();
         final_node = new Languages.Node ();
 
@@ -65,6 +65,9 @@ public class Languages.PostfixToAFN : Object {
     Queue<NDA> on_hold;
 
     construct {
+        ID = 0;
+        postfix_output = "";
+
         nodes = new List<Node>();
         on_hold = new Queue<NDA> ();
     }
@@ -99,7 +102,7 @@ public class Languages.PostfixToAFN : Object {
             }
         }
 
-        stderr.printf ("Initial: %d\nFinal: %d\n", on_hold.peek_head ().initial_node.index, on_hold.peek_head ().final_node.index);
+        postfix_output += "<b>Initial: %d</b>\n<b>Final: %d\n</b>".printf (on_hold.peek_head ().initial_node.index, on_hold.peek_head ().final_node.index);
         print_transitions ();
 
         return on_hold.pop_head ();
