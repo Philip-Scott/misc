@@ -34,11 +34,15 @@ MOUTH EQU R4
 TEMP1 EQU R3
 TEMP2 EQU R2
 
-PULSO EQU 50H
-RESPIR EQU 58H
-TEMP EQU 60H
-PRES_ALT EQU 68H
-PRES_BAJ EQU 70H
+HAPPYNESS EQU 50H
+HUNGRY EQU 51H
+HEALTH EQU 52H
+	
+BAR_FULL EQU 40h
+BAR_3_4 EQU 40h
+BAR_2_4 EQU 40h
+BAR_1_4 EQU 40h
+BAR_EMPTY EQU 40h
 
 ORG 0H
 JMP main;
@@ -82,6 +86,10 @@ reti
 
 ORG 40H
 main:
+	MOV HAPPYNESS, #90
+	MOV HUNGRY, #50H
+	MOV HEALTH, #0A0H
+	
 	acall reset_display
 	CLR S1_OUT
 	CLR S2_OUT
@@ -112,7 +120,40 @@ half_second:
 	out_half:
 ret
 
-send_mouth:
+// TO_DISP data_to_show => TO_DISP bar 
+get_bar:
+	CJNE TO_DISP, #0CFh, fullbar
+	fullbar:
+		JC not_fullbar
+		MOV TO_DISP, #BAR_FULL
+		ret
+	not_fullbar:
+	
+	CJNE TO_DISP, #0CFh, _3_4bar
+	_3_4bar:
+		JC not_3_4bar
+		MOV TO_DISP, #BAR_3_4
+		ret
+	not_3_4bar:
+	
+	CJNE TO_DISP, #0CFh, fullbar
+	_2_4bar:
+		JC not_2_4bar
+		MOV TO_DISP, #BAR_2_4
+		ret
+	not_2_4bar:
+	
+	CJNE TO_DISP, #0CFh, fullbar
+	_1_4bar:
+		JC not_fullbar
+		MOV TO_DISP, #BAR_1_4
+		ret
+	not__1_4bar:
+	
+	MOV TO_DISP, #BAR_EMPTY
+ret
+
+send_face:
 	CLR LCD_RS
 	MOV TO_DISP, #82H
 	acall send_to_display
@@ -164,7 +205,7 @@ reset_display:	; Clears the screen,
 
 	MOV EYES, '^';
 	MOV MOUTH, '_'
-	acall send_mouth
+	acall send_face
 ret
 
 wait: 
