@@ -111,6 +111,79 @@ main:
 	MOV IE, #10110111B
 jmp $;
 
+make_custom_chars:
+	CLR LCD_RS
+	MOV TO_DISP, #40H //Move dptr to CGRAM:0
+	acall to_disp;
+	SETB LCD_RS
+	
+	// Full
+	MOV TO_DISP, #0b00100
+	acall to_disp;
+	MOV TO_DISP, #0b01110
+	acall to_disp;
+	acall custom_full_row
+	acall custom_full_row
+	acall custom_full_row
+	acall custom_full_row
+	acall custom_full_row
+	acall custom_full_row
+	
+	// 3/4
+	acall custom_initial_rows
+	acall custom_empty_row
+	acall custom_full_row
+	acall custom_full_row
+	acall custom_full_row
+	acall custom_full_row
+	acall custom_full_row
+	
+	// 2/4
+	acall custom_initial_rows
+	acall custom_empty_row
+	acall custom_empty_row
+	acall custom_full_row
+	acall custom_full_row
+	acall custom_full_row
+	acall custom_full_row
+	
+	// 1/4
+	acall custom_initial_rows
+	acall custom_empty_row
+	acall custom_empty_row
+	acall custom_empty_row
+	acall custom_full_row
+	acall custom_full_row
+	acall custom_full_row
+	
+	// 0/4
+	acall custom_initial_rows
+	acall custom_empty_row
+	acall custom_empty_row
+	acall custom_empty_row
+	acall custom_empty_row
+	acall custom_empty_row
+	acall custom_full_row
+ret
+
+custom_initial_rows:
+	MOV TO_DISP, #0b00100
+	acall to_disp;
+	MOV TO_DISP, #0b01010
+	acall to_disp;
+ret
+
+custom_full_row:
+	MOV TO_DISP, #0b11111
+	acall to_disp;
+ret
+
+custom_empty_row:
+	MOV TO_DISP, #0b10001
+	acall to_disp;
+ret
+
+
 half_second:
 	INC SECONDS
 	
