@@ -1,0 +1,181 @@
+/*
+* Projecto Final
+*
+* Felipe Escoto - is697491
+* Fernando Villanueva - is967728
+*/
+
+T2CON EQU 0C8H
+T2MOD EQU 0C9H
+RCAP2L EQU 0CAH
+RCAP2H EQU 0CBH
+TL2 EQU 0CCH
+TH2 EQU 0CDH
+TR2 EQU 0CAH
+TF2 EQU 0CAH
+
+S1_OUT EQU p1.0
+S2_OUT EQU p1.1
+ALARM EQU p1.2
+LCD_RS EQU p3.6  
+LCD_E EQU p3.7
+	
+KEYBOARD_INPUT EQU p1
+DATA_READY EQU p3.2
+	
+DATA_POINTER EQU R0 // Counts the times it reads data
+DATA_TYPE EQU 78H
+SEND_BUTTON EQU p3.3
+
+TO_DISP EQU R7
+SECONDS EQU R6
+EYES EQU R5
+MOUTH EQU R4
+TEMP1 EQU R3
+TEMP2 EQU R2
+
+PULSO EQU 50H
+RESPIR EQU 58H
+TEMP EQU 60H
+PRES_ALT EQU 68H
+PRES_BAJ EQU 70H
+
+ORG 0H
+JMP main;
+
+; extern 0 : Data Ready from ADC
+ORG 03H
+CLR IE0
+	
+reti
+
+; Rutina de interupcion de Temp0 cada .5s
+ORG 0BH;
+	CLR TF0
+	acall half_second
+reti
+
+/*
+Happy:  
+^ v ^   ^ - ^  - _ -  x _ x 
+*/
+
+; Extern 1
+ORG 13H
+	CLR IE1
+reti
+
+; Temp1
+ORG 1BH
+reti
+
+; Temp2
+ORG 2BH
+	CLR TF0
+	INC TL0;
+
+	MOV A, TL0
+	JNZ skip_t0flag
+		SETB TF0
+	skip_t0flag:
+reti
+
+ORG 40H
+main:
+	acall reset_display
+	CLR S1_OUT
+	CLR S2_OUT
+	CLR ALARM
+	MOV TO_DISP, #0;
+	MOV DATA_POINTER, #00h;
+
+	MOV TMOD, #00100001b
+	MOV SCON, #50H
+	MOV TCON, #00000101b
+	MOV	TH1, #0FFH
+	MOV	TL1, #0FFH
+	
+	SETB TR1
+
+	SETB IT0
+	CLR IE0
+		// Global, -, T2, Serial, T1, Int1 T0, Int0
+	MOV IE, #10110111B
+jmp $;
+
+half_second:
+	INC SECONDS
+	
+	CJNE SECONDS, #60, out_half
+		MOV SECONDS, #0
+		ret
+	out_half:
+ret
+
+send_mouth:
+	CLR LCD_RS
+	MOV TO_DISP, #82H
+	acall send_to_display
+	
+	setb LCD_RS;
+	MOV A, EYES	
+	MOV TO_DISP, A;
+	acall send_to_display
+	
+	MOV A, MOUTH
+	MOV TO_DISP, A
+	acall send_to_display
+	
+	MOV A, EYES	
+	MOV TO_DISP, A;
+	acall send_to_display
+ret
+
+send_space:
+	MOV TO_DISP, ' '
+	acall send_to_display
+ret
+
+send_to_display: // Sends what's on R7 to disp
+	CLR LCD_E;
+	MOV P2, TO_disp;
+	
+	acall wait;
+	
+	SETB LCD_E
+	nop	
+	CLR LCD_E;
+ret
+
+reset_display:	; Clears the screen, 
+	CLR LCD_RS
+	MOV TO_DISP, #38H;
+	acall send_to_display
+	MOV TO_DISP, #38H;
+	acall send_to_display
+	MOV TO_DISP, #38H;
+	acall send_to_display
+	MOV TO_DISP, #01H; //Borrar DDRM
+	acall send_to_display
+	MOV TO_DISP, #0CH; Display encendido, cursor desactivado, parpadeo desactivado.
+	acall send_to_display
+	MOV TO_DISP, #80H
+	setb LCD_RS;
+
+	MOV EYES, '^';
+	MOV MOUTH, '_'
+	acall send_mouth
+ret
+
+wait: 
+	MOV TEMP1, #100;
+	MOV TEMP2, #100;
+
+	wait_for_disp1:
+	wait_for_disp2:
+	DJNZ TEMP1, wait_for_disp1;
+	DJNZ TEMP2, wait_for_disp2;
+ret
+
+
+end
