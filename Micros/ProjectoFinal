@@ -22,8 +22,7 @@ LCD_E EQU p3.7
 	
 KEYBOARD_INPUT EQU p1
 DATA_READY EQU p3.2
-	
-DATA_POINTER EQU R0 // Counts the times it reads data
+
 DATA_TYPE EQU 78H
 SEND_BUTTON EQU p3.3
 
@@ -34,9 +33,13 @@ MOUTH EQU R4
 TEMP1 EQU R3
 TEMP2 EQU R2
 
+// Real Stats
 HAPPYNESS EQU 50H
-HUNGRY EQU 51H
-HEALTH EQU 52H
+HUNGER EQU 52H
+HEALTH EQU 54H
+
+HAPPY_GAIN EQU 51H //Play
+HUNGRY_GAIN EQU 53H //Comida
 
 BAR_FULL EQU 04h
 BAR_3_4 EQU 03h
@@ -50,7 +53,6 @@ JMP main;
 ; extern 0 : Data Ready from ADC
 ORG 03H
 CLR IE0
-	
 reti
 
 ; Rutina de interupcion de Temp0 cada .5s
@@ -86,16 +88,18 @@ reti
 
 ORG 40H
 main:
-	MOV HAPPYNESS, #90
+	MOV HAPPYNESS, #90h
 	MOV HUNGER, #50H
 	MOV HEALTH, #0A0H
 	
 	acall reset_display
-	CLR S1_OUT
+jmp $;
+	/*CLR S1_OUT
 	CLR S2_OUT
 	CLR ALARM
 	MOV TO_DISP, #0;
-	MOV DATA_POINTER, #00h;
+	MOV r0, #00h;
+	MOV r1, #00h;
 
 	MOV TMOD, #00100001b
 	MOV SCON, #50H
@@ -104,17 +108,16 @@ main:
 	MOV	TL1, #0FFH
 	
 	SETB TR1
-
 	SETB IT0
-	CLR IE0
+	CLR IE0*/
 		// Global, -, T2, Serial, T1, Int1 T0, Int0
-	MOV IE, #10110111B
+	//MOV IE, #10110111B
 jmp $;
 
 make_custom_chars:
 	CLR LCD_RS
 	MOV TO_DISP, #40H //Move dptr to CGRAM:0
-	acall to_disp;
+	acall send_to_display;
 	SETB LCD_RS
 	
 	// 0/4
@@ -154,10 +157,10 @@ make_custom_chars:
 	acall custom_full_row
 	
 	// Full
-	MOV TO_DISP, #0b00100
-	acall to_disp;
-	MOV TO_DISP, #0b01110
-	acall to_disp;
+	MOV TO_DISP, #00100b
+	acall send_to_display;
+	MOV TO_DISP, #01110b
+	acall send_to_display;
 	acall custom_full_row
 	acall custom_full_row
 	acall custom_full_row
@@ -168,66 +171,66 @@ make_custom_chars:
 	// Happy
 	acall send_empty_row;
 	acall send_empty_row;
-	MOV TO_DISP, #0b01010
-	acall to_disp;
+	MOV TO_DISP, #01010b
+	acall send_to_display;
 	acall send_empty_row;
-	MOV TO_DISP, #0b10001
-	acall to_disp;
-	MOV TO_DISP, #0b01110
-	acall to_disp;
+	MOV TO_DISP, #10001b
+	acall send_to_display;
+	MOV TO_DISP, #01110b
+	acall send_to_display;
 	acall send_empty_row;
 	acall send_empty_row;
 	
 	//Food
 	acall send_empty_row;
-	MOV TO_DISP, #0b01110
-	acall to_disp;
-	MOV TO_DISP, #0b01110
-	acall to_disp;
-	MOV TO_DISP, #0b00100
-	acall to_disp;
-	MOV TO_DISP, #0b00100
-	acall to_disp;
-	MOV TO_DISP, #0b01110
-	acall to_disp;
-	MOV TO_DISP, #0b01110
-	acall to_disp;
+	MOV TO_DISP, #01110b
+	acall send_to_display;
+	MOV TO_DISP, #01110b
+	acall send_to_display;
+	MOV TO_DISP, #00100b
+	acall send_to_display;
+	MOV TO_DISP, #00100b
+	acall send_to_display;
+	MOV TO_DISP, #01110b
+	acall send_to_display;
+	MOV TO_DISP, #01110b
+	acall send_to_display;
 	acall send_empty_row;
 	
 	// Heart
 	acall send_empty_row;
-	MOV TO_DISP, #0b01010
-	acall to_disp;
+	MOV TO_DISP, #01010b
+	acall send_to_display;
 	acall custom_full_row
 	acall custom_full_row
 	acall custom_full_row
-	MOV TO_DISP, #0b01110
-	acall to_disp;
-	MOV TO_DISP, #0b00100
-	acall to_disp;
+	MOV TO_DISP, #01110b
+	acall send_to_display;
+	MOV TO_DISP, #00100b
+	acall send_to_display;
 	acall send_empty_row;
 ret
 
 custom_initial_rows:
-	MOV TO_DISP, #0b00100
-	acall to_disp;
-	MOV TO_DISP, #0b01010
-	acall to_disp;
+	MOV TO_DISP, #00100b
+	acall send_to_display;
+	MOV TO_DISP, #01010b
+	acall send_to_display;
 ret
 
 custom_full_row:
-	MOV TO_DISP, #0b11111
-	acall to_disp;
+	MOV TO_DISP, #11111b
+	acall send_to_display;
 ret
 
 custom_empty_row:
-	MOV TO_DISP, #0b10001
-	acall to_disp;
+	MOV TO_DISP, #10001b
+	acall send_to_display;
 ret
 
 send_empty_row:
-	MOV TO_DISP, #0b00000
-	acall to_disp;
+	MOV TO_DISP, #00000000b
+	acall send_to_display;
 ret
 
 half_second:
@@ -241,31 +244,31 @@ ret
 
 game_tic: 
 	MOV A, HAPPYNESS
-	JZ, is_sad:
+	JZ is_sad
 		DEC A
 		jmp not_sad;
 	is_sad:
 		MOV A, HEALTH
-			JZ, dead:
+			JZ dead
 			DEC A
 	not_sad:	
 	MOV A, HUNGER
-	JZ, is_hungry:
+	JZ is_hungry
 		DEC A
 		jmp not_hungry
 	is_hungry:	
 		MOV A, HEALTH
-			JZ, dead:
+			JZ dead
 			DEC A
 		MOV A, HEALTH
-			JZ, dead:
+			JZ dead
 			DEC A
 		MOV A, HEALTH
-			JZ, dead:
+			JZ dead
 			DEC A
 	not_hungry:
 	MOV A, HEALTH
-	JZ, dead:
+	JZ dead
 		DEC A
 	ret
 dead:
@@ -282,26 +285,26 @@ get_bar:
 		ret
 	not_fullbar:
 	
-	CJNE TO_DISP, #0CFh, _3_4bar
+	CJNE TO_DISP, #9Fh, _3_4bar
 	_3_4bar:
 		JC not_3_4bar
 		MOV TO_DISP, #BAR_3_4
 		ret
 	not_3_4bar:
 	
-	CJNE TO_DISP, #0CFh, fullbar
+	CJNE TO_DISP, #5Fh, _2_4bar
 	_2_4bar:
 		JC not_2_4bar
 		MOV TO_DISP, #BAR_2_4
 		ret
 	not_2_4bar:
 	
-	CJNE TO_DISP, #0CFh, fullbar
+	CJNE TO_DISP, #10h, _1_4bar
 	_1_4bar:
-		JC not_fullbar
+		JC not_1_4bar
 		MOV TO_DISP, #BAR_1_4
 		ret
-	not__1_4bar:
+	not_1_4bar:
 	
 	MOV TO_DISP, #BAR_EMPTY
 ret
@@ -326,7 +329,7 @@ send_face:
 ret
 
 send_space:
-	MOV TO_DISP, ' '
+	MOV TO_DISP, #' '
 	acall send_to_display
 ret
 
@@ -353,12 +356,37 @@ reset_display:	; Clears the screen,
 	acall send_to_display
 	MOV TO_DISP, #0CH; Display encendido, cursor desactivado, parpadeo desactivado.
 	acall send_to_display
+	
+	
+	acall make_custom_chars
+	CLR LCD_RS
+	CLR LCD_RS
+	
 	MOV TO_DISP, #80H
+	
 	setb LCD_RS;
 
-	MOV EYES, '^';
-	MOV MOUTH, '_'
+	MOV TO_DISP, #33h
+	acall send_to_display
+	
+	MOV EYES, #'0';
+	MOV MOUTH, #'.'
 	acall send_face
+	
+	MOV TO_DISP, #' '
+	acall send_to_display
+	
+	MOV TO_DISP, HAPPYNESS
+	acall get_bar
+	acall send_to_display
+	
+	MOV TO_DISP, HUNGER
+	acall get_bar
+	acall send_to_display
+	
+	MOV TO_DISP, HEALTH
+	acall get_bar
+	acall send_to_display
 ret
 
 wait: 
