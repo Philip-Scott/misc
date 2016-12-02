@@ -70,6 +70,7 @@ vala_precompile(VALA_C
   src/Window.vala
   src/InfixConverter.vala
   src/PostfixToAFNE.vala
+  src/NFAtoDFA.vala
   #src/config.vala
 PACKAGES
   ${VALA_DEPS}

@@ -6,7 +6,8 @@ public class Languages.Window : Gtk.Window {
     public Gtk.Entry regex;
     public Gtk.TextView text;
 
-    public Gtk.Label output;
+    public Gtk.Label output_dirty;
+    public Gtk.Label output_clean;
     public Gtk.TextView result;
 
     public Window () {
@@ -23,10 +24,28 @@ public class Languages.Window : Gtk.Window {
                 var postfix = converter.convert (regex.text);
 
                 var to_afn = new Languages.PostfixToAFN ();
-                to_afn.convert (postfix);
+                var converted = to_afn.convert (postfix);
+
+                to_afn.print_transitions (converted);
+                output_dirty.label = postfix_output;
+
+                to_afn.remove_double_nulls (converted, nodes);
+                to_afn.print_transitions (converted);
+
+                var dfa = new NFAtoDFA ();
+
+                to_afn.print_transitions (converted);
+                output_clean.label = dfa.output;
+
+
+
+                if (output_dirty.label == output_clean.label) {
+                    output_clean.label = "";
+                }
+
+
 
                 stdout.printf (postfix_output);
-                output.label = postfix_output;
             }
         });
     }
@@ -44,10 +63,15 @@ public class Languages.Window : Gtk.Window {
         set_titlebar (headerbar);
         hide_titlebar_when_maximized = true;
 
-        output = new Gtk.Label ("");
-        output.use_markup = true;
-        output.valign = Gtk.Align.START;
-        output.justify = Gtk.Justification.LEFT;
+        output_dirty = new Gtk.Label ("");
+        output_dirty.use_markup = true;
+        output_dirty.valign = Gtk.Align.START;
+        output_dirty.justify = Gtk.Justification.LEFT;
+
+        output_clean = new Gtk.Label ("");
+        output_clean.use_markup = true;
+        output_clean.valign = Gtk.Align.START;
+        output_clean.justify = Gtk.Justification.LEFT;
 
         regex = new Gtk.Entry ();
         regex.get_style_context ().add_class ("h2");
@@ -69,15 +93,20 @@ public class Languages.Window : Gtk.Window {
         var frame1 = new Gtk.Frame (null);
         frame1.add (text);
 
-        var output_scroll = new Gtk.ScrolledWindow (null, null);
-        output_scroll.hscrollbar_policy = Gtk.PolicyType.NEVER;
-        output_scroll.add (output);
+        var output_scroll_dirty = new Gtk.ScrolledWindow (null, null);
+        output_scroll_dirty.hscrollbar_policy = Gtk.PolicyType.NEVER;
+        output_scroll_dirty.add (output_dirty);
+
+        var output_scroll_clean = new Gtk.ScrolledWindow (null, null);
+        output_scroll_clean.hscrollbar_policy = Gtk.PolicyType.NEVER;
+        output_scroll_clean.add (output_clean);
 
         pane.pack1 (frame1, true, false);
 
-        grid.attach (regex, 0, 0, 2, 1);
+        grid.attach (regex, 0, 0, 3, 1);
         grid.attach (pane, 0, 1, 1, 1);
-        grid.attach (output_scroll, 1, 1, 1, 1);
+        grid.attach (output_scroll_dirty, 1, 1, 1, 1);
+        grid.attach (output_scroll_clean, 2, 1, 1, 1);
         this.add (grid);
 
         this.set_keep_above (true);
