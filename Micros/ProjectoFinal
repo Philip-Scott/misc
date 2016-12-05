@@ -16,7 +16,7 @@ TF2 EQU 0CAH
 
 //S1_OUT EQU p1.0
 //S2_OUT EQU p1.1
-ALARM EQU p1.2
+ALARM EQU p1.0
 DATA_READY EQU p3.2
 SEND_BUTTON EQU p3.3
 
@@ -60,7 +60,7 @@ reti
 ; Rutina de interupcion de Temp0 cada .5s
 ORG 0BH;
 	CLR TF0
-	acall game_tic;inc_hunger
+	acall game_tic
 reti
 
 /*
@@ -92,6 +92,7 @@ reti
 
 ORG 40H
 main:
+	SETB ALARM
 	MOV HAPPYNESS, #90h
 	MOV HUNGER, #40H
 	MOV HEALTH, #0A0H
@@ -108,7 +109,6 @@ main:
 	MOV RCAP2L, #LOW(-2000);
 	
 	SETB TR2
-	SETB IT0
 	
 	CLR IE0
 		// Global, -, T2, Serial, T1, Int1 T0, Int0
@@ -116,33 +116,39 @@ main:
 jmp $;
 	
 inc_hunger:
-	MOV A, HUNGER
-	clr OV
-	clr c
-	clr ac
-	ADD A, #4
-	
-	JNB OV, over_hunger
-		MOV A, #0FFH
-	over_hunger:
-	
-	MOV HUNGER, A
-	ACALL refresh_display;
+	MOV R1, #HUNGER
+	JMP INC_STAT
 ret
 
 inc_happyness:
-	MOV A, HAPPYNESS
-	clr OV
-	clr c
-	clr ac
-	ADD A, #4
+	MOV R1, #HAPPYNESS
+	INC_STAT:
+		MOV TO_DISP, HEALTH
+		acall get_bar
+		MOV A, TO_DISP
+		
+		MOV TO_DISP, HAPPYNESS
+		acall get_bar
+		ADD A, TO_DISP
+		
+		MOV TO_DISP, HUNGER
+		acall get_bar
+		ADD A, TO_DISP
 	
-	JNB OV, over_happy
-		MOV A, #0FFH
-	over_happy:
-	
-	MOV HAPPYNESS, A
-	ACALL refresh_display;
+		MOV B, #3
+		DIV AB
+		
+		CJNE A, #00H, dont_inc?
+		MOV A, B
+		CJNE A, #00H, dont_inc?
+			ret
+		dont_inc?:
+		CLR ALARM
+		ACALL INC_R1
+		ACALL INC_R1
+		ACALL INC_R1
+		ACALL INC_R1
+		
 ret
 
 make_custom_chars:
@@ -445,8 +451,7 @@ refresh_display:
 	MOV TO_DISP, #33h
 	acall send_to_display
 	
-	MOV EYES, #'0';
-	MOV MOUTH, #'.'
+	acall get_face;
 	acall send_face
 	
 	MOV TO_DISP, #' '
@@ -470,6 +475,55 @@ refresh_display:
 	acall send_space
 	acall send_space
 	acall send_space
+	
+	SETB ALARM
+ret
+
+get_face:
+	MOV TO_DISP, HEALTH
+	acall get_bar
+	MOV A, TO_DISP
+	
+	MOV TO_DISP, HAPPYNESS
+	acall get_bar
+	ADD A, TO_DISP
+	
+	MOV TO_DISP, HUNGER
+	acall get_bar
+	ADD A, TO_DISP
+	
+	MOV B, #3
+	DIV AB
+	
+	CJNE A, #4, FACE_4
+		MOV EYES, #'^'; ^.^
+		MOV MOUTH, #'.'
+		RET
+	FACE_4:
+	CJNE A, #3, FACE_3
+		MOV EYES, #'^'; ^_^
+		MOV MOUTH, #'_'
+		RET
+	FACE_3:
+	CJNE A, #2, FACE_2
+		MOV EYES, #'0'; 0_0
+		MOV MOUTH, #'_'
+		RET
+	FACE_2:
+	CJNE A, #1, FACE_1
+		MOV EYES, #'-'; -_-
+		MOV MOUTH, #'_'
+		RET
+	FACE_1:
+	MOV A, B
+	CJNE A, #0, is_really_DEAD
+		MOV EYES, #'x'; x.x
+		MOV MOUTH, #'.'
+		ret
+	is_really_DEAD:
+		MOV EYES, #'v'; v.v
+		MOV MOUTH, #'.'
+	RET
 ret
 
 wait: 
