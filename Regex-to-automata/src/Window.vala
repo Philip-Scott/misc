@@ -42,7 +42,7 @@ public class Languages.Window : Gtk.Window {
             to_afn.print_transitions (converted);
             output_clean.label = dfa.output;
 
-            var input_data = text.buffer.text.split ("\n");
+            var input_data = text.buffer.text.replace (" ", "_").split ("\n");
             results.label = "";
 
             foreach (var line in input_data) {
@@ -53,7 +53,7 @@ public class Languages.Window : Gtk.Window {
                 }
             }
 
-            if (output_dirty.label == output_clean.label) {
+            if (output_dirty.label == output_clean.label || output_dirty.label == "") {
                 output_clean.label = "";
             }
 
@@ -73,6 +73,9 @@ public class Languages.Window : Gtk.Window {
 
         set_titlebar (headerbar);
         hide_titlebar_when_maximized = true;
+
+        var open_button = new Gtk.FileChooserButton ("Input Text", Gtk.FileChooserAction.OPEN);
+        headerbar.pack_end (open_button);
 
         output_dirty = new Gtk.Label ("");
         output_dirty.use_markup = true;
@@ -95,6 +98,7 @@ public class Languages.Window : Gtk.Window {
         regex.set_placeholder_text ("Regular expression...");
 
         text = new Gtk.TextView ();
+        text.pixels_below_lines = 1;
         text.expand = true;
 
         result = new Gtk.TextView ();
@@ -106,9 +110,19 @@ public class Languages.Window : Gtk.Window {
         grid.column_spacing = 6;
         grid.orientation = Gtk.Orientation.VERTICAL;
 
+        var text_scroll = new Gtk.ScrolledWindow (null, null);
+        text_scroll.hscrollbar_policy = Gtk.PolicyType.AUTOMATIC;
+        text_scroll.vscrollbar_policy = Gtk.PolicyType.AUTOMATIC;
+
+        var results_scroll = new Gtk.ScrolledWindow (null, text_scroll.vadjustment);
+        results_scroll.hscrollbar_policy = Gtk.PolicyType.NEVER;
+        results_scroll.vscrollbar_policy = Gtk.PolicyType.EXTERNAL;
+        results_scroll.add (results);
+
         var pane = new Gtk.Paned (Gtk.Orientation.HORIZONTAL);
         var frame1 = new Gtk.Frame (null);
-        frame1.add (text);
+        frame1.add (text_scroll);
+        text_scroll.add (text);
 
         var output_scroll_dirty = new Gtk.ScrolledWindow (null, null);
         output_scroll_dirty.hscrollbar_policy = Gtk.PolicyType.NEVER;
@@ -118,10 +132,24 @@ public class Languages.Window : Gtk.Window {
         output_scroll_clean.hscrollbar_policy = Gtk.PolicyType.NEVER;
         output_scroll_clean.add (output_clean);
 
+        open_button.selection_changed.connect (() => {
+	    	SList<string> uris = open_button.get_uris ();
+	    	foreach (unowned string uri in uris) {
+	    		try {
+	    		    var current_file = File.new_for_uri (uri);
+                    var dis = new DataInputStream (current_file.read ());
+                    size_t size;
+                    text.buffer.text = dis.read_upto ("\0", -1, out size);
+                } catch (Error e) {
+                    warning ("Error loading file: %s", e.message);
+                }
+	    	}
+    	});
+
         pane.pack1 (frame1, true, false);
 
         grid.attach (regex, 0, 0, 4, 1);
-        grid.attach (results, 0, 1, 1, 1);
+        grid.attach (results_scroll, 0, 1, 1, 1);
         grid.attach (pane, 1, 1, 1, 1);
         grid.attach (output_scroll_dirty, 2, 1, 1, 1);
         grid.attach (output_scroll_clean, 3, 1, 1, 1);

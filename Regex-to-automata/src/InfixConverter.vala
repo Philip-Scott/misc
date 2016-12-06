@@ -24,8 +24,8 @@ public class Languages.PostfixConverter {
         SYMBOLS = "";
         operators.append (new Operand ("*", 6));
         operators.append (new Operand ("+", 5));
-        operators.append (new Operand (".", 4));
-        operators.append (new Operand (",", 3));
+        operators.append (new Operand (",", 4));
+        operators.append (new Operand (".", 3));
         operators.append (new Operand (")", 2));
         operators.append (new Operand ("(", 1));
     }
@@ -92,22 +92,34 @@ public class Languages.PostfixConverter {
     }
 
     private string cleanup (string s) {
-        string sn = "(" + s + ")";
+        string sn = "(" + s.replace (" ", "_") + ")";
         string str = "";
         bool previous_is_char = false;
+
         // Add spaces between operators
         for (int i = 0; i < sn.length; i++) {
             if (SYMBOLS.contains (sn.get_char(i).to_string())) {
                 str += " " + sn.get_char(i).to_string () + " ";
             } else {
-//                if (previous_is_char) {
-                    //str += " . " + sn.get_char(i).to_string ();
-  //              } else {
-                    str += sn.get_char(i).to_string ();
-    //                previous_is_char = true;
-      //          }
+                str += sn.get_char(i).to_string ();
             }
         }
+
+        /*
+        var char_array = sn.replace (" ", "_").to_utf8 ();
+
+        foreach (var c in char_array) {
+            if (SYMBOLS.contains (c.to_string())) {
+                str += " " + c.to_string () + " ";
+                previous_is_char = false;
+            } else if (previous_is_char) {
+                str += " . " + c.to_string () + " ";
+            } else if (!previous_is_char) {
+                str += c.to_string ();
+                previous_is_char = true;
+            }
+        }
+        */
 
         stderr.printf ("Cleanup: %s\n",str.strip ());
 

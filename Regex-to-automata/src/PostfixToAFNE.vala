@@ -16,7 +16,6 @@ public class Languages.Node : Object {
 
     public void add_transition (Languages.Node node, string input) {
         weak Gee.List<Languages.Node> list;
-
         if (!transitions.contains (input)) {
             transitions.insert (input, new Gee.ArrayList<Languages.Node>());
         } else {
@@ -81,6 +80,7 @@ public class Languages.PostfixToAFN : Object {
     // a ----> b ----> c = a ----> c
     //   null    null        null
     public void remove_double_nulls (NDA a, List<Languages.Node> nodes) {
+        return;
         bool removed = false;
         do {
             removed = false;
@@ -95,6 +95,7 @@ public class Languages.PostfixToAFN : Object {
                                         // Removing transition
                                         stderr.printf ("2 chained nulls found: %s -> %s -> %s\n", node_a.index, node_b.index, node_c.index);
                                         removed = override_transition (node_a, node_b);
+
                                     }
                                 }
                             }

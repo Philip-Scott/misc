@@ -78,13 +78,27 @@ public class Languages.NFAtoDFA {
         add_closure_nodes (get_closure_of (automata.initial_node), ref current_states);
 
         var char_array = to_check.to_utf8 ();
-
+        bool final_reached = false;
         foreach (var input in char_array) {
-            print_current_states (this.current_states, input);
+        /*    print_current_states (this.current_states, input);
             this.current_states = run_afn_step (this.current_states, input);
         }
 
-        return has_final_step (ref current_states, automata.final_node);
+        return has_final_step (ref current_states, automata.final_node);/**/
+
+        // ALT Self reloading
+            if (this.current_states.length () == 0) {
+                add_closure_nodes (get_closure_of (automata.initial_node), ref current_states);
+            }
+
+            print_current_states (this.current_states, input);
+            this.current_states = run_afn_step (this.current_states, input);
+            if (has_final_step (ref current_states, automata.final_node)) {
+                final_reached = true;
+            }
+        }
+
+        return final_reached;/**/
     }
 
     private List<Languages.Node> run_afn_step (List<Languages.Node> current_states, char letter) {
@@ -98,7 +112,7 @@ public class Languages.NFAtoDFA {
                     add_closure_nodes (get_closure_of (out_node), ref new_states);
                 }
             }
-            
+
             if (node.transitions.contains ("&")) {
                 var outputs = node.transitions.get ("&");
 
