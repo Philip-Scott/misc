@@ -45,6 +45,7 @@ public class Languages.Window : Gtk.Window {
                     if (dfa.run_afn (converted, line)) {
                         results.label += "✓\n";
                     } else {
+                        results.label += "✗\n";
                     }
                 }
 
