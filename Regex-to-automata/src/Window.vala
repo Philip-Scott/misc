@@ -19,43 +19,46 @@ public class Languages.Window : Gtk.Window {
     private void connect_signals () {
         destroy.connect (Gtk.main_quit);
 
-        regex.activate.connect (() => {
-            if (regex.text.strip () != "") {
-                var converter = new Languages.PostfixConverter ();
-                var postfix = converter.convert (regex.text);
+        regex.changed.connect (run_test);
+        text.buffer.changed.connect (run_test);
+    }
 
-                var to_afn = new Languages.PostfixToAFN ();
-                var converted = to_afn.convert (postfix);
+    private void run_test () {
+        if (regex.text.strip () != "") {
+            var converter = new Languages.PostfixConverter ();
+            var postfix = converter.convert (regex.text);
 
-                to_afn.print_transitions (converted);
-                output_dirty.label = postfix_output.replace ("&", "&amp;");
+            var to_afn = new Languages.PostfixToAFN ();
+            var converted = to_afn.convert (postfix);
 
-                to_afn.remove_double_nulls (converted, nodes);
-                to_afn.print_transitions (converted);
+            to_afn.print_transitions (converted);
+            output_dirty.label = postfix_output.replace ("&", "&amp;");
 
-                var dfa = new NFAtoDFA ();
+            to_afn.remove_double_nulls (converted, nodes);
+            to_afn.print_transitions (converted);
 
-                to_afn.print_transitions (converted);
-                output_clean.label = dfa.output;
+            var dfa = new NFAtoDFA ();
 
-                var input_data = text.buffer.text.split ("\n");
-                results.label = "";
+            to_afn.print_transitions (converted);
+            output_clean.label = dfa.output;
 
-                foreach (var line in input_data) {
-                    if (dfa.run_afn (converted, line)) {
-                        results.label += "✓\n";
-                    } else {
-                        results.label += "✗\n";
-                    }
+            var input_data = text.buffer.text.split ("\n");
+            results.label = "";
+
+            foreach (var line in input_data) {
+                if (dfa.run_afn (converted, line)) {
+                    results.label += "✓\n";
+                } else {
+                    results.label += "✗\n";
                 }
-
-                if (output_dirty.label == output_clean.label) {
-                    output_clean.label = "";
-                }
-
-                stdout.printf (postfix_output);
             }
-        });
+
+            if (output_dirty.label == output_clean.label) {
+                output_clean.label = "";
+            }
+
+            stdout.printf (postfix_output);
+        }
     }
 
     private void build_ui () {

@@ -22,8 +22,8 @@ public class Languages.PostfixConverter {
 
     public PostfixConverter () {
         SYMBOLS = "";
-        operators.append (new Operand ("*", 5));
-        operators.append (new Operand ("+", 4));
+        operators.append (new Operand ("*", 6));
+        operators.append (new Operand ("+", 5));
         operators.append (new Operand (".", 4));
         operators.append (new Operand (",", 3));
         operators.append (new Operand (")", 2));
