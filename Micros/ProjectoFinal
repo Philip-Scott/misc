@@ -1,0 +1,540 @@
+/*
+* Projecto Final
+*
+* Felipe Escoto - is697491
+* Fernando Villanueva - is967728
+*/
+
+T2CON EQU 0C8H
+T2MOD EQU 0C9H
+RCAP2L EQU 0CAH
+RCAP2H EQU 0CBH
+TL2 EQU 0CCH
+TH2 EQU 0CDH
+TR2 EQU 0CAH
+TF2 EQU 0CAH
+
+//S1_OUT EQU p1.0
+//S2_OUT EQU p1.1
+ALARM EQU p1.0
+DATA_READY EQU p3.2
+SEND_BUTTON EQU p3.3
+
+LCD_RS EQU p3.6
+LCD_E EQU p3.7
+	
+KEYBOARD_INPUT EQU p1
+
+DATA_TYPE EQU 78H
+
+TO_DISP EQU R7
+SECONDS EQU R6
+EYES EQU R5
+MOUTH EQU R4
+TEMP1 EQU R3
+TEMP2 EQU R2
+
+// Real Stats
+HAPPYNESS EQU 50H
+HUNGER EQU 52H
+HEALTH EQU 54H
+
+HAPPY_GAIN EQU 51H //Play
+HUNGRY_GAIN EQU 53H //Comida
+
+BAR_FULL EQU 04h
+BAR_3_4 EQU 03h
+BAR_2_4 EQU 02h
+BAR_1_4 EQU 01h
+BAR_EMPTY EQU 00h
+
+ORG 0H
+JMP main;
+
+; extern 0 :
+ORG 03H
+	CLR IE0
+	acall inc_happyness
+reti
+
+; Rutina de interupcion de Temp0 cada .5s
+ORG 0BH;
+	CLR TF0
+	acall game_tic
+reti
+
+/*
+Happy:  
+^ v ^   ^ - ^  - _ -  x _ x 
+*/
+
+; Extern 1
+ORG 13H
+	CLR IE1
+	acall inc_hunger
+reti
+
+; Temp1
+ORG 1BH
+reti
+
+; Temp2
+ORG 2BH
+	CLR TF0
+	cpl p3.4
+	INC TL0;
+
+	MOV A, TL0
+	JNZ skip_t0flag
+		SETB TF0
+	skip_t0flag:
+reti
+
+ORG 40H
+main:
+	SETB ALARM
+	MOV HAPPYNESS, #90h
+	MOV HUNGER, #40H
+	MOV HEALTH, #0A0H
+	
+	acall reset_display
+
+	MOV TO_DISP, #0;
+	MOV r0, #00h;
+	MOV r1, #00h;
+
+	MOV TMOD, 00000110B;
+	MOV TH0, #(-250);
+	MOV RCAP2H, #HIGH(-2000);
+	MOV RCAP2L, #LOW(-2000);
+	
+	SETB TR2
+	
+	CLR IE0
+		// Global, -, T2, Serial, T1, Int1 T0, Int0
+	MOV IE, #10100111B
+jmp $;
+	
+inc_hunger:
+	MOV R1, #HUNGER
+	JMP INC_STAT
+ret
+
+inc_happyness:
+	MOV R1, #HAPPYNESS
+	INC_STAT:
+		MOV TO_DISP, HEALTH
+		acall get_bar
+		MOV A, TO_DISP
+		
+		MOV TO_DISP, HAPPYNESS
+		acall get_bar
+		ADD A, TO_DISP
+		
+		MOV TO_DISP, HUNGER
+		acall get_bar
+		ADD A, TO_DISP
+	
+		MOV B, #3
+		DIV AB
+		
+		CJNE A, #00H, dont_inc?
+		MOV A, B
+		CJNE A, #00H, dont_inc?
+			ret
+		dont_inc?:
+		CLR ALARM
+		ACALL INC_R1
+		ACALL INC_R1
+		ACALL INC_R1
+		ACALL INC_R1
+		
+ret
+
+make_custom_chars:
+	CLR LCD_RS
+	MOV TO_DISP, #40H //Move dptr to CGRAM:0
+	acall send_to_display;
+	SETB LCD_RS
+	nop
+	nop
+	
+	// 0/4
+	acall custom_initial_rows
+	acall custom_empty_row
+	acall custom_empty_row
+	acall custom_empty_row
+	acall custom_empty_row
+	acall custom_empty_row
+	acall custom_full_row
+	
+	// 1/4
+	acall custom_initial_rows
+	acall custom_empty_row
+	acall custom_empty_row
+	acall custom_empty_row
+	acall custom_full_row
+	acall custom_full_row
+	acall custom_full_row
+	
+	// 2/4
+	acall custom_initial_rows
+	acall custom_empty_row
+	acall custom_empty_row
+	acall custom_full_row
+	acall custom_full_row
+	acall custom_full_row
+	acall custom_full_row
+	
+	// 3/4
+	acall custom_initial_rows
+	acall custom_empty_row
+	acall custom_full_row
+	acall custom_full_row
+	acall custom_full_row
+	acall custom_full_row
+	acall custom_full_row
+	
+	// Full
+	MOV TO_DISP, #00100b
+	acall send_to_display;
+	MOV TO_DISP, #01110b
+	acall send_to_display;
+	acall custom_full_row
+	acall custom_full_row
+	acall custom_full_row
+	acall custom_full_row
+	acall custom_full_row
+	acall custom_full_row
+	
+	// Happy
+	acall send_empty_row;
+	acall send_empty_row;
+	MOV TO_DISP, #01010b
+	acall send_to_display;
+	acall send_empty_row;
+	MOV TO_DISP, #10001b
+	acall send_to_display;
+	MOV TO_DISP, #01110b
+	acall send_to_display;
+	acall send_empty_row;
+	acall send_empty_row;
+	
+	//Food
+	MOV TO_DISP, #00010b	
+	acall send_to_display;
+	MOV TO_DISP, #00100b	
+	acall send_to_display;
+	acall send_to_display;
+	MOV TO_DISP, #01110b
+	acall send_to_display;
+	acall custom_full_row;
+	acall custom_full_row;
+	acall custom_full_row;
+	MOV TO_DISP, #01110b
+	acall send_to_display;
+
+	// Heart
+	acall send_empty_row;
+	MOV TO_DISP, #01010b
+	acall send_to_display;
+	acall custom_full_row
+	acall custom_full_row
+	acall custom_full_row
+	MOV TO_DISP, #01110b
+	acall send_to_display;
+	MOV TO_DISP, #00100b
+	acall send_to_display;
+	acall send_empty_row;
+ret
+
+custom_initial_rows:
+	MOV TO_DISP, #00100b
+	acall send_to_display;
+	MOV TO_DISP, #01010b
+	acall send_to_display;
+ret
+
+custom_full_row:
+	MOV TO_DISP, #11111b
+	acall send_to_display;
+ret
+
+custom_empty_row:
+	MOV TO_DISP, #10001b
+	acall send_to_display;
+ret
+
+send_empty_row:
+	MOV TO_DISP, #00000000b
+	acall send_to_display;
+ret
+
+half_second:
+	INC SECONDS
+	
+	CJNE SECONDS, #60, out_half
+		MOV SECONDS, #0
+		ret
+	out_half:
+ret
+
+game_tic: 
+	cpl p3.0
+	MOV A, HAPPYNESS
+	JZ is_sad
+		MOV R1, #HAPPYNESS
+		ACALL DEC_R1
+		jmp not_sad;
+	is_sad:
+		MOV R1, #HEALTH
+		ACALL DEC_R1
+		JZ dead
+	not_sad:
+		MOV R1, #HUNGER
+		ACALL DEC_R1
+		ACALL DEC_R1
+		ACALL DEC_R1
+		ACALL DEC_R1
+		JZ is_hungry
+		jmp not_hungry
+	is_hungry:	
+		MOV R1, #HEALTH
+		ACALL DEC_R1
+		ACALL DEC_R1
+		ACALL DEC_R1
+		ACALL DEC_R1
+		JZ dead
+	not_hungry:
+		MOV R1, #HEALTH
+		ACALL INC_R1
+		JZ dead
+	acall refresh_display
+	ret
+dead:
+	MOV HAPPYNESS, #00h
+	MOV HUNGER, #00H
+	MOV HEALTH, #00H
+	acall refresh_display
+ret
+
+INC_r1:
+	MOV A, @R1
+	CJNE A, #0FFH, doINC
+	RET
+	doINC:
+	INC A
+	MOV @R1, A
+ret
+
+dec_r1:
+	MOV A, @R1
+	JZ dont_dec
+	DEC A
+	MOV @R1, A
+dont_dec:
+ret
+
+
+// TO_DISP data_to_show => TO_DISP bar 
+get_bar:
+	CJNE TO_DISP, #0CFh, fullbar
+	fullbar:
+		JC not_fullbar
+		MOV TO_DISP, #BAR_FULL
+		ret
+	not_fullbar:
+	
+	CJNE TO_DISP, #9Fh, _3_4bar
+	_3_4bar:
+		JC not_3_4bar
+		MOV TO_DISP, #BAR_3_4
+		ret
+	not_3_4bar:
+	
+	CJNE TO_DISP, #5Fh, _2_4bar
+	_2_4bar:
+		JC not_2_4bar
+		MOV TO_DISP, #BAR_2_4
+		ret
+	not_2_4bar:
+	
+	CJNE TO_DISP, #10h, _1_4bar
+	_1_4bar:
+		JC not_1_4bar
+		MOV TO_DISP, #BAR_1_4
+		ret
+	not_1_4bar:
+	
+	MOV TO_DISP, #BAR_EMPTY
+ret
+
+send_face:
+	CLR LCD_RS
+	MOV TO_DISP, #82H
+	acall send_to_display
+	
+	setb LCD_RS;
+	MOV A, EYES	
+	MOV TO_DISP, A;
+	acall send_to_display
+	
+	MOV A, MOUTH
+	MOV TO_DISP, A
+	acall send_to_display
+	
+	MOV A, EYES	
+	MOV TO_DISP, A;
+	acall send_to_display
+	acall send_space
+ret
+
+send_space:
+	MOV TO_DISP, #' '
+	acall send_to_display
+ret
+
+send_to_display: // Sends what's on R7 to disp
+	CLR LCD_E;
+	MOV P2, TO_disp;
+	
+	acall wait;
+	
+	SETB LCD_E
+	nop	
+	CLR LCD_E;
+ret
+
+reset_display:	; Clears the screen, 
+	CLR LCD_RS
+	MOV TO_DISP, #38H;
+	acall send_to_display
+	MOV TO_DISP, #38H;
+	acall send_to_display
+	MOV TO_DISP, #38H;
+	acall send_to_display
+	MOV TO_DISP, #01H; //Borrar DDRM
+	acall send_to_display
+	MOV TO_DISP, #0CH; Display encendido, cursor desactivado, parpadeo desactivado.
+	
+	acall send_to_display
+	acall make_custom_chars
+	
+	CLR LCD_RS
+	MOV TO_DISP, #0C9H
+	acall send_to_display
+	setb LCD_RS;
+	
+	MOV TO_DISP, #05H
+	acall send_to_display
+	
+	MOV TO_DISP, #06H
+	acall send_to_display
+	
+	MOV TO_DISP, #07H
+	acall send_to_display
+	
+	MOV TO_DISP, #' '
+	acall send_to_display
+	acall send_to_display
+	acall send_to_display
+	acall send_to_display
+	
+	CLR LCD_RS
+refresh_display:
+	CLR LCD_RS
+	
+	MOV TO_DISP, #80H
+	
+	setb LCD_RS;
+
+	MOV TO_DISP, #33h
+	acall send_to_display
+	
+	acall get_face;
+	acall send_face
+	
+	MOV TO_DISP, #' '
+	acall send_to_display
+	acall send_to_display
+	acall send_to_display
+	
+	MOV TO_DISP, HAPPYNESS
+	acall get_bar
+	acall send_to_display
+	
+	MOV TO_DISP, HUNGER
+	acall get_bar
+	acall send_to_display
+	
+	MOV TO_DISP, HEALTH
+	acall get_bar
+	acall send_to_display
+	acall send_space
+	acall send_space
+	acall send_space
+	acall send_space
+	acall send_space
+	
+	SETB ALARM
+ret
+
+get_face:
+	MOV TO_DISP, HEALTH
+	acall get_bar
+	MOV A, TO_DISP
+	
+	MOV TO_DISP, HAPPYNESS
+	acall get_bar
+	ADD A, TO_DISP
+	
+	MOV TO_DISP, HUNGER
+	acall get_bar
+	ADD A, TO_DISP
+	
+	MOV B, #3
+	DIV AB
+	
+	CJNE A, #4, FACE_4
+		MOV EYES, #'^'; ^.^
+		MOV MOUTH, #'.'
+		RET
+	FACE_4:
+	CJNE A, #3, FACE_3
+		MOV EYES, #'^'; ^_^
+		MOV MOUTH, #'_'
+		RET
+	FACE_3:
+	CJNE A, #2, FACE_2
+		MOV EYES, #'0'; 0_0
+		MOV MOUTH, #'_'
+		RET
+	FACE_2:
+	CJNE A, #1, FACE_1
+		MOV EYES, #'-'; -_-
+		MOV MOUTH, #'_'
+		RET
+	FACE_1:
+	MOV A, B
+	CJNE A, #0, is_really_DEAD
+		MOV EYES, #'x'; x.x
+		MOV MOUTH, #'.'
+		ret
+	is_really_DEAD:
+		MOV EYES, #'v'; v.v
+		MOV MOUTH, #'.'
+	RET
+ret
+
+wait: 
+	MOV TEMP1, #100;
+	MOV TEMP2, #100;
+
+	wait_for_disp1:
+	wait_for_disp2:
+	DJNZ TEMP1, wait_for_disp1;
+	DJNZ TEMP2, wait_for_disp2;
+ret
+
+
+end
