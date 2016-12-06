@@ -9,6 +9,7 @@ public class Languages.Window : Gtk.Window {
     public Gtk.Label output_dirty;
     public Gtk.Label output_clean;
     public Gtk.TextView result;
+    public Gtk.Label results;
 
     public Window () {
         build_ui ();
@@ -27,7 +28,7 @@ public class Languages.Window : Gtk.Window {
                 var converted = to_afn.convert (postfix);
 
                 to_afn.print_transitions (converted);
-                output_dirty.label = postfix_output;
+                output_dirty.label = postfix_output.replace ("&", "&amp;");
 
                 to_afn.remove_double_nulls (converted, nodes);
                 to_afn.print_transitions (converted);
@@ -37,13 +38,19 @@ public class Languages.Window : Gtk.Window {
                 to_afn.print_transitions (converted);
                 output_clean.label = dfa.output;
 
+                var input_data = text.buffer.text.split ("\n");
+                results.label = "";
 
+                foreach (var line in input_data) {
+                    if (dfa.run_afn (converted, line)) {
+                        results.label += "✓\n";
+                    } else {
+                    }
+                }
 
                 if (output_dirty.label == output_clean.label) {
                     output_clean.label = "";
                 }
-
-
 
                 stdout.printf (postfix_output);
             }
@@ -72,6 +79,12 @@ public class Languages.Window : Gtk.Window {
         output_clean.use_markup = true;
         output_clean.valign = Gtk.Align.START;
         output_clean.justify = Gtk.Justification.LEFT;
+
+        results = new Gtk.Label ("");
+        results.use_markup = true;
+        results.valign = Gtk.Align.START;
+        results.justify = Gtk.Justification.LEFT;
+        results.get_style_context ().add_class ("h3");
 
         regex = new Gtk.Entry ();
         regex.get_style_context ().add_class ("h2");
@@ -103,10 +116,11 @@ public class Languages.Window : Gtk.Window {
 
         pane.pack1 (frame1, true, false);
 
-        grid.attach (regex, 0, 0, 3, 1);
-        grid.attach (pane, 0, 1, 1, 1);
-        grid.attach (output_scroll_dirty, 1, 1, 1, 1);
-        grid.attach (output_scroll_clean, 2, 1, 1, 1);
+        grid.attach (regex, 0, 0, 4, 1);
+        grid.attach (results, 0, 1, 1, 1);
+        grid.attach (pane, 1, 1, 1, 1);
+        grid.attach (output_scroll_dirty, 2, 1, 1, 1);
+        grid.attach (output_scroll_clean, 3, 1, 1, 1);
         this.add (grid);
 
         this.set_keep_above (true);
