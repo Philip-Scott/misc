@@ -1,0 +1,1 @@
+valac src/*.vala src/Objects/*.vala --pkg json-glib-1.0 --pkg gee-0.8
